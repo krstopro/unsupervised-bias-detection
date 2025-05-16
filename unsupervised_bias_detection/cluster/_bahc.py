@@ -71,16 +71,15 @@ class BiasAwareHierarchicalClustering(BaseEstimator, ClusterMixin):
         std = np.std(y)
         # The entire dataset has a discrimination score of zero
         score = 0
-        root = ClusterNode(label, -std, score)
+        root = ClusterNode(label, score)
         self.cluster_tree_ = root
-        heap = [root]
+        heap = [(-std, label, root)]
         for _ in range(self.bahc_max_iter):
             if not heap:
                 # If the heap is empty we stop iterating
                 break
             # Take the cluster with the highest standard deviation of metric y
-            node = heapq.heappop(heap)
-            label = node.label
+            _, label, node = heapq.heappop(heap)
             score = node.score
             cluster_indices = np.nonzero(labels == label)[0]
             X_cluster = X[cluster_indices]
@@ -121,21 +120,20 @@ class BiasAwareHierarchicalClustering(BaseEstimator, ClusterMixin):
             # If the split is valid, we create the children nodes and split the current node
             # Otherwise, we add the current node to the leaves
             if valid_split:
-                # TODO: Make this nicer!
-                # TODO: Maybe explain why we negate std before pushing to heap
                 first_child_indices = children_indices[0]
-                first_child_std = np.std(y[first_child_indices])
                 first_child_score = child_scores[0]
-                first_child = ClusterNode(label, -first_child_std, first_child_score)
-                heapq.heappush(heap, first_child)
+                first_child = ClusterNode(label, first_child_score)
+                first_child_std = np.std(y[first_child_indices])
+                # heapq implements min-heap, so we negate std before pushing
+                heapq.heappush(heap, (-first_child_std, label, first_child))
                 labels[first_child_indices] = label
                 children = [first_child]
                 for i in range(1, n_children):
                     child_indices = children_indices[i]
-                    child_std = np.std(y[child_indices])
                     child_score = child_scores[i]
-                    child_node = ClusterNode(self.n_clusters_, -child_std, child_score)
-                    heapq.heappush(heap, child_node)
+                    child_node = ClusterNode(self.n_clusters_, child_score)
+                    child_std = np.std(y[child_indices])
+                    heapq.heappush(heap, (-child_std, self.n_clusters_, child_node))
                     labels[child_indices] = self.n_clusters_
                     children.append(child_node)
                     self.n_clusters_ += 1
@@ -143,7 +141,7 @@ class BiasAwareHierarchicalClustering(BaseEstimator, ClusterMixin):
             else:
                 leaves.append(node)
         
-        leaves.extend(heap)
+        leaves.extend([leaf for _, _, leaf in heap])
         leaf_scores = np.array([leaf.score for leaf in leaves])
         # We sort clusters by decreasing scores
         sorted_indices = np.argsort(-leaf_scores)
