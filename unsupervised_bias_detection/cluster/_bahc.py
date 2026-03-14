@@ -1,5 +1,5 @@
-import heapq
 from collections import deque
+import heapq
 from numbers import Integral, Real
 from typing import Any, ClassVar
 
