@@ -1,7 +1,6 @@
 """Provides functions for testing dataset properties."""
 import pandas as pd
 
-
 # TODO: add functionality to complete checks if dealing with a numpy array instead of pandas
 
 
@@ -99,14 +98,17 @@ def run_checks(data):
     Example
     --------
     >>> from unsupervised_bias_detection.utils.validation import run_checks
-    >>>data_dict = {'x': [[1, 2, 3], [3, 2, 1],[4, 5, 6]], 'preds': [0, 1, 1], 'true_labels': [0, 0, 1]}
-    >>>data_df = pd.DataFrame(data=data_dict)
-    >>>data_df
+    >>> import pandas as pd
+    >>> data_dict = {'x': [[1, 2, 3], [3, 2, 1],[4, 5, 6]], 'preds': [0, 1, 1], 'true_labels': [0, 0, 1]}
+    >>> data_df = pd.DataFrame(data=data_dict)
+    >>> data_df
                x  preds  true_labels
     0  [1, 2, 3]      0            0
     1  [3, 2, 1]      1            0
     2  [4, 5, 6]      1            1
     >>> run_checks(data_df)
+    Beginning testing...
+    No errors, finished testing.
     """
     print("Beginning testing...")
     features, predictions, true_labels = _data_preprocessing(data)
