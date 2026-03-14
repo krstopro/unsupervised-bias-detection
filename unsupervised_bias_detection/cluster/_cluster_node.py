@@ -1,37 +1,33 @@
-import itertools
-from sklearn.base import ClusterMixin
 from typing import Self
 
+from sklearn.base import ClusterMixin
+
+
 class ClusterNode:
-    def __init__(self, label: int, neg_std: float, score: float):
+    def __init__(self, label: int, score: float):
         """
         Initialize a node in the cluster tree.
-        
+
         Parameters
         ----------
         label : int
             The cluster label for this node (required as all nodes start as leaves)
         """
         self.label = label
-        self.neg_std = neg_std
         self.score = score
         self.clustering_model = None
         self.children = []
-    
+
     @property
     def is_leaf(self):
         return len(self.children) == 0
-    
-    def __lt__(self, other: Self):
-        # TODO: Use score before label
-        return self.neg_std < other.neg_std or (self.neg_std == other.neg_std and self.label < other.label)
-    
+
     def split(self, clustering_model: ClusterMixin, children: list[Self]):
         """
         Split this node by setting its clustering model and adding children.
-        
+
         This converts the node to an internal node and removes its label
-        
+
         Parameters
         ----------
         clustering_model : ClusterMixin
@@ -42,11 +38,11 @@ class ClusterNode:
         self.label = None
         self.clustering_model = clustering_model
         self.children = children
-    
+
     def get_leaves(self) -> list[Self]:
         """
         Get all leaf nodes in the subtree rooted at this node.
-        
+
         Returns
         -------
         list of ClusterNode
@@ -54,7 +50,7 @@ class ClusterNode:
         """
         if not self.children:
             return [self]
-        
+
         leaves = []
         for child in self.children:
             leaves.extend(child.get_leaves())

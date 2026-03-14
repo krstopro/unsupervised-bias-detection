@@ -1,6 +1,6 @@
-"""Provides tests for the functions in unsupervised_bias_detection/utils/validation.py."""
-import pandas as pd
+"""Tests for the functions in unsupervised_bias_detection/utils/validation.py."""
 import numpy as np
+import pandas as pd
 import pytest
 
 from unsupervised_bias_detection.utils.validation import run_checks
@@ -14,7 +14,7 @@ def test_always_passes():
         "true_labels": [0, 0, 1],
     }
     df_test0 = pd.DataFrame(data=dict0)
-    assert not run_checks(df_test0) is ValueError
+    assert run_checks(df_test0) is not ValueError
 
 
 @pytest.mark.xfail

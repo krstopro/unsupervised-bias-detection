@@ -1,4 +1,4 @@
-"""Provides tests for the loading function in unsupervised_bias_detection/utils/dataset.py."""
+"""Tests for the loading function in unsupervised_bias_detection/utils/dataset.py."""
 import pytest
 
 from unsupervised_bias_detection.utils.dataset import load_default_dataset

@@ -1,4 +1,4 @@
-"""The :mod:`unsupervised_bias_detection.cluster` module implements bias-aware clustering algorithms."""
+"""Bias-aware hierarchical clustering algorithms."""
 
 from ._bahc import BiasAwareHierarchicalClustering
 from ._kmeans import BiasAwareHierarchicalKMeans
